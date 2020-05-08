@@ -1,0 +1,30 @@
+# terraformのインストールを確認する
+- name: Confirm installation of terraform
+  stat:
+    path: "/usr/local/bin/terraform"
+  register: terraform_state
+# 同じterraformバージョンがインストール済みだったらやらない設定
+- block:
+    # terraformをダウンロードし解凍
+    - name: Unarchive terraform that needs to be downloaded
+      unarchive:
+        src: https://releases.hashicorp.com/terraform/{{ terraform_version }}/terraform_{{ terraform_version }}_linux_amd64.zip
+        dest: /usr/local/src
+        remote_src: yes
+
+    - name: terraform copy
+      synchronize:
+        src: /usr/local/src/terraform
+        dest: /usr/local/bin/terraform
+      delegate_to: "{{ inventory_hostname }}"
+
+  # 同じprometheusバージョンインストール済みだったらやらない範囲終わり
+  when: not terraform_state.stat.exists
+
+# - name: prometheus-node-exporter config set
+#   template:
+#     src: node_exporter_config
+#     dest: "{{ node_exporter_config_file }}"
+#     owner: root
+#     group: root
+#     mode: 0644
