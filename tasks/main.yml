@@ -18,13 +18,5 @@
         dest: /usr/local/bin/terraform
       delegate_to: "{{ inventory_hostname }}"
 
-  # 同じprometheusバージョンインストール済みだったらやらない範囲終わり
+  # 同じterraformバージョンインストール済みだったらやらない範囲終わり
   when: not terraform_state.stat.exists
-
-# - name: prometheus-node-exporter config set
-#   template:
-#     src: node_exporter_config
-#     dest: "{{ node_exporter_config_file }}"
-#     owner: root
-#     group: root
-#     mode: 0644
